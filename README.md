@@ -30,7 +30,7 @@ This all results in the following
 * App Directories are set to their respective app icons if possible.
 * If the app is uninstalled, it is given the `emblem-important` emblem (or its icon set to `folder-red` in KDE's case since it doesn't support emblems)
 * If the app is installed, it is given the `emblem-installed` emblem (nothing in KDE's case.)
-* If there is a binary, but no Icon, this script assumes it is a command-line program such as [ponysay](https://github.com/erkin/ponysay), which is available through Flatpak and will set the folder icon to a `terminal` (`utilities-terminal` for KDE)
+* If there is a binary, but no Icon, this script assumes it is a command-line program such as [ponysay](https://github.com/erkin/ponysay), which is available through Flatpak and will set the folder icon to `terminal` (`utilities-terminal` for KDE)
 
 ...thus making your App Directories far more pleasant to browse!
 
