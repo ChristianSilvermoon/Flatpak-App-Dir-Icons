@@ -1,0 +1,86 @@
+#!/bin/bash
+
+cd "$HOME/.var/app"
+FLATPAK_SYS_BIN="/var/lib/flatpak/exports/bin"
+FLATPAK_USER_BIN="${XDG_DATA_HOME:=$HOME/.local/share}/flatpak/exports/bin"
+
+FLATPAK_SYS_ICN="/var/lib/flatpak/exports/share/icons"
+FLATPAK_USER_ICN="${XDG_DATA_HOME:=$HOME/.local/share}/flatpak/exports/share/icons"
+
+
+kde-set-icon() {
+	local DIR="$1"
+	local ICN="$2"
+
+	[ "$ICN" = "terminal" ] && ICN="utilities-terminal"
+
+	if [ ! "$ICN" ]; then
+		rm "$DIR/.directory"
+	else
+		local ENTRY=$(echo -e "[Desktop Entry]\nIcon=")
+		ENTRY+="$ICN"
+
+		echo "$ENTRY" > "$DIR/.directory"
+	fi
+}
+
+gnome-set-icon() {
+	local DIR="$1"
+	local ICN="$2"
+
+	if [ ! "$ICN" ]; then
+		gio set "$DIR" -t unset metadata::custom-icon-name
+	else
+		gio set "$DIR" -t string metadata::custom-icon-name "$ICN"
+	fi
+}
+
+set-icon() {
+	local DIR="$1"
+	local ICN="$2"
+
+	echo "Setting Icon:"
+	echo "DIR: $DIR"
+	echo "ICN: $ICN"
+	echo ""
+
+	gnome-set-icon "$DIR" "$ICN"
+	kde-set-icon "$DIR" "$ICN"
+}
+
+set-emblem() {
+	local DIR="$1"
+	local EMB="$2"
+
+	if [ ! "$EMB" ]; then
+		gio set -t unset "$DIR" metadata::emblems
+	else
+		gio set -t stringv "$DIR" metadata::emblems "$EMB"
+	fi
+}
+
+process-dir() {
+	# If exists set icon accordingly
+	if [ -x "$FLATPAK_SYS_BIN/$1" ] || [ -x "$FLATPAK_USER_BIN/$1" ]; then
+
+		if [ "$(find "$FLATPAK_SYS_ICN" -name "$1.*")" ] || [ "$(find "$FLATPAK_USER_ICN" -name "$1.*")" ]; then
+			set-icon "$PWD/$1" "${1//\/}"
+		else
+			set-icon "$PWD/$1" "terminal"
+		fi
+
+		#set-emblem "emblem-installed"
+	else
+		# If not installed revert icon
+		set-icon "$PWD/$1"
+		kde-set-icon "$PWD/$1" "folder-red"
+		set-emblem "emblem-important"
+	fi
+		
+}
+
+for x in *; do
+	if [ -d "$x" ]; then
+		process-dir "$x"
+	fi
+done
