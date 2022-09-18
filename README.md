@@ -11,6 +11,9 @@ But Humans are GOOD at recognizing **Icons**. It's why we use them so prevalentl
 
 So, in an effort to make `~/.var/app` more pleasant to browse... a simple shell script to give you *Icons*.
 
+This also helps you see **RIGHT AWAY** which of your Flatpak App Directories are still useful and which belong to apps you
+no longer have installed and/or no longer need.
+
 ## How Does It Work?
 
 This script works by doing the following.
